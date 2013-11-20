@@ -27,25 +27,6 @@
 
         <!--[if lt IE 9]>
             <script src="lib/js/html5shiv.js"></script>
-
-
-* augmentation nombre de serveurs
-* reordonner les derniers slides
-* conclusion trop abrupte
-* DB: pas cools, d'accord, mais v2 !
-* technique de migration v3 (les 2 en parallèles)
-* D'ailleurs: beta en cours
-* screenshots v2 et v3
-* 1 slide par pays => bof
-*
-* Critiquer doctrine => pas une bonne idée
-* expliquer que les fronts qui accèdent au datas, c'est pas scalable => donc EM => (en plus normaliste les données)
-* Plusieurs déploiements / jours (Du coup chef, nouveau aussi !)
-* Détailler un peu plus les locks
-* Schéma bidon du vhost event de RabbitMQ
-*
-* 25 minutes !
-            
         <![endif]-->
     </head>
 
@@ -92,15 +73,12 @@
                     </section>
                     <section>
                         <h2>who wants to see his family...</h2>
-                        <img src="./images/funny-christmas-cats.jpg" alt="Funny christmas cat">
                     </section>
                     <section data-background="#C83433">
                         <h2>without tickets...</h2>
-                        <img src="./images/cat-train.jpg" alt="Cat in train">
                     </section>
                     <section data-background="#C83433">
                         <h2>seeing plenty empty cars...</h2>
-                        <img src="./images/cat-driving-car.jpg" alt="Cat driving car">
                     </section>
                     <section data-background="#6CB52D">
                         <h2>HAD AN IDEA !</h2>
@@ -316,7 +294,14 @@
                         </ul>
                     </section>
                     <section>
-                        <h1>Requirements</h1>
+                        <h2>Business requirements</h2>
+                        <ul>
+                            <li>We can't stop the site (yeah, really !)</li>
+                            <li>We can't stop improving v2</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h1>Technical needs</h1>
                     </section>
                     <section>
                         <h2>Well known framework</h2>
@@ -454,6 +439,14 @@
                         <p class="fragment">No more manual installation !</p>
                         <img height="400" class="fragment" src="./images/logo-chef.png" alt="Logo chef" />
                     </section>
+                    <section>
+                        <h2>And also</h2>
+                        <p class="fragment">Between 5 and 15 deployments / day</p>
+                        <p class="fragment">New Relic for application monitoring</p>
+                        <p class="fragment">S3 for photo</p>
+                        <p class="fragment">EC2 (logstash, newsletters, ...)</p>
+                        <p class="fragment">30 slots for dev / preprod env</p>
+                    </section>
                 </section>
 
                 <section>
@@ -570,6 +563,7 @@
                             <li>Simple REST API</li>
                             <li>Multiple backends (MySQL, CouchBase, ElasticSearch, ...)</li>
                             <li>No more direct access to data</li>
+                            <li>Normalize data for v3 (and all applications ?)</li>
                             <li>Wait &amp; See. :)</li>
                         </ul>
                     </section>
