@@ -1,0 +1,674 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+
+        <title>Blablacar - L'histoire technique</title>
+
+        <meta name="description" content="3 millions d'utilisateurs dans 10 pays : l'histoire technique de BlablaCar">
+        <meta name="author" content="Olivier Dolbeau">
+
+        <meta name="apple-mobile-web-app-capable" content="yes" />
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+        <link rel="stylesheet" href="css/reveal.min.css">
+        <link rel="stylesheet" href="css/theme/blablacar.css" id="theme">
+        <!--<link rel="stylesheet" href="css/print/pdf.css">-->
+
+        <!-- For syntax highlighting -->
+        <link rel="stylesheet" href="lib/css/zenburn.css">
+
+        <!-- If the query includes 'print-pdf', use the PDF print sheet -->
+        <script>
+        document.write( '<link rel="stylesheet" href="css/print/' + ( window.location.search.match( /print-pdf/gi ) ? 'pdf' : 'paper' ) + '.css" type="text/css" media="print">' );
+        </script>
+
+        <!--[if lt IE 9]>
+            <script src="lib/js/html5shiv.js"></script>
+
+
+* augmentation nombre de serveurs
+* reordonner les derniers slides
+* conclusion trop abrupte
+* DB: pas cools, d'accord, mais v2 !
+* technique de migration v3 (les 2 en parallèles)
+* D'ailleurs: beta en cours
+* screenshots v2 et v3
+* 1 slide par pays => bof
+*
+* Critiquer doctrine => pas une bonne idée
+* expliquer que les fronts qui accèdent au datas, c'est pas scalable => donc EM => (en plus normaliste les données)
+* Plusieurs déploiements / jours (Du coup chef, nouveau aussi !)
+* Détailler un peu plus les locks
+* Schéma bidon du vhost event de RabbitMQ
+*
+* 25 minutes !
+            
+        <![endif]-->
+    </head>
+
+    <body>
+
+        <div class="reveal">
+
+            <!-- Any section element inside of this container is displayed as a slide -->
+            <div class="slides">
+                <section>
+                    <h1>3 millions users<br />in 10 countries</h1>
+                    <h3>Technical story of BlaBlaCar</h3>
+                    <p>
+                    <small>Created by <a href="http://odolbeau.fr">Olivier Dolbeau</a> / <a href="http://twitter.com/odolbeau">@odolbeau</a></small>
+                    </p>
+
+                    <aside class="notes">
+                    </aside>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>3 millions users ?</h1>
+                    </section>
+                    <section data-background="#C83433">
+                        <h1>No !</h1>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h1>5 millions users !</h1>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <img src="./images/not-bad.png" alt="Not bad !">
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>The story</h1>
+                        <p>How Blablacar is born ?</p>
+                    </section>
+                    <section>
+                        <h2>A man</h2>
+                        <img height="350" src="./images/frederic-mazzella.jpg" alt="Frederic Mazzella">
+                    </section>
+                    <section>
+                        <h2>who wants to see his family...</h2>
+                        <img src="./images/funny-christmas-cats.jpg" alt="Funny christmas cat">
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>without tickets...</h2>
+                        <img src="./images/cat-train.jpg" alt="Cat in train">
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>seeing plenty empty cars...</h2>
+                        <img src="./images/cat-driving-car.jpg" alt="Cat driving car">
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>HAD AN IDEA !</h2>
+                        <img src="./images/covoiturage.jpg" alt="Logo covoiturage">
+
+                        <aside class="notes">
+                            Pas de soucis, il a quand même pu aller voir sa famille grace à sa soeur. :)
+                        </aside>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>The concept</h1>
+                        <p>How Blablacar works ?</p>
+                    </section>
+                    <section>
+                        <img src="./images/affiche-metro.jpg" alt="Affiche métro" />
+                        <aside class="notes">
+                            Quelqu'un a déjà fait du covoiturage ?
+                        </aside>
+                    </section>
+                    <section>
+                        <h2>Driver: Empty car ?</h2>
+                        <img height="600" src="./images/hamster.jpg" alt="Hamster in car" />
+                    </section>
+                    <section>
+                        <h2>Passenger: Looking for a vehicle ?</h2>
+                        <img height="600" src="./images/standing-cat.jpg" alt="Standing cat" />
+                    </section>
+                    <section>
+                        <h2>Travel together !</h2>
+                        <img height="600" src="./images/dogs-in-car.jpg" alt="Dogs in car" />
+                    </section>
+                </section>
+
+                <section>
+                    <h2>Let's tech about technique !</h2>
+                    <img width="500" src="./images/girl-in-cables.jpg" alt="Girl in cables">
+                    <p>Because it's sexy !</p>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>V1</h1>
+                        <p>Quick &amp; dirty !</p>
+                    </section>
+                    <section>
+                        <h2>"Development" start in 2004</h2>
+                    </section>
+                    <section>
+                        <h2>U know Joomla ?</h2>
+                        <img src="./images/logo-joomla.png" alt="Logo joomla">
+                    </section>
+                    <section>
+                        <h2>But have you met Mambo ?</h2>
+                        <img src="./images/logo-mambo.jpg" alt="Logo joomla">
+                    </section>
+                    <section>
+                        <h2>Don't be jealous !</h2>
+                        <img src="./images/v1.png" alt="Old v1">
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>OK the prototype works !</h2>
+                        <p>Now let's move !</p>
+                    </section>
+                </section>
+
+                <!-- ################################################### -->
+                <!-- ################################################### -->
+                <!-- ################################################### -->
+                <!-- ################################################### -->
+
+                <section>
+                    <section>
+                        <h1>V2</h1>
+                        <p>Plain old school PHP</p>
+                    </section>
+                    <section>
+                        <h2>Development start in January 2008</h2>
+                    </section>
+                    <section>
+                        <h2>Context</h2>
+                        <p>From scratch</p>
+                        <p>Use the same database than the V1</p>
+                    </section>
+                    <section data-background="./images/flag-france.jpg">
+                        <h2 style="color: black;">September 2008</h2>
+                        <p style="color: black;">Launch in France</p>
+                    </section>
+                    <section data-background="./images/flag-spain.jpg">
+                        <h2 style="color: black;">January 2010</h2>
+                        <p style="color: black;">Launch in Spain</p>
+                    </section>
+                    <section data-background="./images/flag-uk.jpg">
+                        <h2>June 2011</h2>
+                        <p>Launch in UK</p>
+                    </section>
+                    <section data-background="./images/flag-italy.jpg">
+                        <h2 style="color: black;">May 2012</h2>
+                        <p style="color: black;">Launch in Italy</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h1>1</h1>
+                        <p class="fragment">million users use website every month</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h1>8 680</h1>
+                        <p class="fragment">Average rpm during last month</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h1>329</h1>
+                        <p class="fragment">Average response time during last month (in ms)</p>
+                    </section>
+                    <section data-background="#FBB922">
+                        <h1>4 683</h1>
+                        <p class="fragment">commits on Git (in the 3 last years)</p>
+                    </section>
+                    <section data-background="#C83433">
+                        <h1>285 588</h1>
+                        <p class="fragment">lines of code...</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>V2 works fine</h2>
+                        <p>France (with booking)</p>
+                        <p>Spain</p>
+                        <p>UK</p>
+                        <p>Italy</p>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>But it's not good enough.</h2>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>No code convention</h2>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>Home made code</h2>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>Need more developers</h2>
+                        <p class="fragment">And still need ! =)</p>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>Not scalable</h2>
+                        <p class="fragment">To search trip ? SQL !</p>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>Hard to maintain</h2>
+                        <p class="fragment">Imagine if YOU have to update the lib.trip.php file !</p>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>lib.trip.php</h2>
+                        <p class="fragment">3770 lines</p>
+                        <p class="fragment">69 functions</p>
+                        <p class="fragment">926 lines... for 1 function !</p>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>It look like this</h2>
+                        <pre><code class="php">if (...) {
+    if () {
+        for () {
+            if (){
+            }else{
+            }
+        }
+        if () {
+            for () {
+                if () ;
+                else
+            }
+        }
+    }
+    if(){
+    }
+}
+                        </code></pre>
+                    </section>
+                    <section data-background="#C83433">
+                        <img src="./images/seriously-dude-wtf.png" alt="Seriously dude ?">
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>No tests !</h2>
+                    </section>
+                    <section data-background="#C83433">
+                        <img src="./images/seriously-dude-wtf.png" alt="Seriously dude ?">
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>Better than v1 right ?</h2>
+                        <img src="./images/v2.png" alt="v2">
+                    </section>
+                </section>
+
+                <!-- ################################################### -->
+                <!-- ################################################### -->
+                <!-- ################################################### -->
+                <!-- ################################################### -->
+
+                <section>
+                    <section>
+                        <h1>V3</h1>
+                        <p>Let's do beautiful code !</p>
+                    </section>
+                    <section>
+                        <h1>Context</h1>
+                    </section>
+                    <section>
+                        <h2>BlaBlaCar in Europe</h2>
+                        <ul>
+                            <li>Less than 2 millions members</li>
+                            <li>Online booking in France only</li>
+                            <li>5 countries</li>
+                            <li>From 5 (at the begin) to 20 people in tech team today</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h1>Requirements</h1>
+                    </section>
+                    <section>
+                        <h2>Well known framework</h2>
+                        <ul>
+                            <li>To hire developers</li>
+                            <li>To avoid long learning curve</li>
+                            <li>To not reinvent the wheel (i18n, forms, templates, etc.)</li>
+                            <li>To code quickly</li>
+                        </ul>
+                    </section>
+                    <section data-background="#C83433">
+                        <h1>Symphony</h1>
+                    </section>
+                    <section data-background="./images/omg.jpeg">
+                    </section>
+                    <section data-background="./images/logo-symfony.png" data-background-size="500px">
+                    </section>
+                    <section>
+                        <h2>Good code</h2>
+                        <ul>
+                            <li>Readabability</li>
+                            <li>Fiability</li>
+                            <li>Speed</li>
+                            <li>Scalability</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Readability ?</h2>
+                        <p>PSR-2</p>
+                        <p>Code reviews</p>
+                    </section>
+                    <section>
+                        <h2>Fiability ?</h2>
+                        <ul>
+                            <li>Unit tests with PHPUnit</li>
+                            <li>Functionnal tests with Behat</li>
+                            <li>Continous integration with Bamboo</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Speed ?</h2>
+                        <ul>
+                            <li>Asynchronous job</li>
+                            <li>Cache (thanks sf2)</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Scalibility ?</h2>
+                        <ul>
+                            <li>ElasticSearch</li>
+                            <li>RabbitMQ</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>Development start in March 2012</h2>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>And after 6 months...</h2>
+                    </section>
+                    <section data-background="./images/flag-belgium.jpg">
+                        <h2 style="color: black;">October 2012</h2>
+                        <p style="color: black;">Launch in Belgium</p>
+                    </section>
+                    <section data-background="./images/flag-netherlands.jpg">
+                        <h2 style="color: black;">October 2012</h2>
+                        <p style="color: black;">Launch in Netherlands</p>
+                    </section>
+                    <section data-background="./images/flag-portugal.jpg">
+                        <h2 style="color: black">August 2012</h2>
+                        <p style="color: black">Launch in Portugal</p>
+                    </section>
+                    <section data-background="./images/flag-luxembourg.jpg">
+                        <h2 style="color: black;">October 2012</h2>
+                        <p style="color: black;">Launch in Luxembourg</p>
+                    </section>
+                    <section data-background="./images/flag-poland.jpg">
+                        <h2 style="color: black;">October 2012</h2>
+                        <p style="color: black;">Launch in Poland</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>Migration to v3</h2>
+                    </section>
+                    <section data-background="./images/flag-uk.jpg">
+                        <h2>October 2012</h2>
+                        <p>UK</p>
+                    </section>
+                    <section data-background="./images/flag-italy.jpg">
+                        <h2 style="color: black;">November 2012</h2>
+                        <p style="color: black;">Italy</p>
+                    </section>
+                    <section data-background="./images/flag-spain.jpg">
+                        <h2>November 2012</h2>
+                        <p>Spain</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>And our last country...</h2>
+                        <p>Released in 1 week only</p>
+                    </section>
+                    <section data-background="./images/flag-germany.jpg">
+                        <h2 style="color: black;">April 2013</h2>
+                        <p style="color: black;">Launch in Germany</p>
+                    </section>
+                    <section>
+                        <h2>What do you think ? :)</h2>
+                        <img src="./images/v3.png" alt="v3">
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>Not only a PHP refactoring !</h1>
+                    </section>
+                    <section>
+                        <h2>For search ?</h2>
+                        <p class="fragment">No more SQL !</p>
+                        <img class="fragment" src="./images/logo-elasticsearch.png" alt="Logo elasticsearch" />
+                    </section>
+                    <section>
+                        <h2>For asynchronous tasks ?</h2>
+                        <p class="fragment">No more SQL !</p>
+                        <img height="200" class="fragment" src="./images/logo-rabbitmq.jpg" alt="Logo RabbitMQ" />
+                    </section>
+                    <section>
+                        <h2>For locks ?</h2>
+                        <p class="fragment">No more SQL !</p>
+                        <img height="200" class="fragment" src="./images/logo-redis.png" alt="Logo Redis" />
+                    </section>
+                    <section>
+                        <h2>For logs ?</h2>
+                        <p class="fragment">No more tail on servers !</p>
+                        <img class="fragment" src="./images/logo-logstash.png" alt="Logo Logstash" />
+                    </section>
+                    <section>
+                        <h2>For servers ?</h2>
+                        <p class="fragment">No more manual installation !</p>
+                        <img height="400" class="fragment" src="./images/logo-chef.png" alt="Logo chef" />
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>So now ?</h1>
+                    </section>
+                    <section>
+                        <h2>Is v3 better than v2 ?</h2>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>Average rpm during last month</h2>
+                        <p class="fragment grow">V2: 8 680</p>
+                        <p>V3: 2 790</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>Average response time during last month (in ms)</h2>
+                        <p>V2: 329</p>
+                        <p class="fragment grow">V3: 278</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>Lines of code</h2>
+                        <p>V2: 285 588</p>
+                        <p class="fragment grow">V3: 199 774</p>
+                    </section>
+                    <section>
+                        <h2>Not really relevant right ?</h2>
+                    </section>
+                    <section>
+                        <h2>What do we think about sf2 ?</h2>
+                        <ul>
+                            <li class="fragment highlight-green">To hire developers</li>
+                            <li class="fragment highlight-green">To avoid long learning curve</li>
+                            <li class="fragment highlight-green">To not reinvent the wheel (i18n, forms, templates, etc.)</li>
+                            <li class="fragment highlight-green">To code quickly</li>
+                        </ul>
+                    </section>
+                    <section>
+                        <h2>What do we think about our code</h2>
+                        <ul>
+                            <li class="fragment highlight-orange">Readabability</li>
+                            <li class="fragment highlight-orange">Fiability</li>
+                            <li class="fragment highlight-orange">Speed</li>
+                            <li class="fragment highlight-red">Scalability</li>
+                        </ul>
+                    </section>
+                    <section data-background="#ff8c00">
+                        <h1>Readability</h1>
+                    </section>
+                    <section data-background="#ff8c00">
+                        <h2>Too many events</h2>
+                        <p>Inside sf2 !</p>
+                    </section>
+                    <section data-background="#ff8c00">
+                        <h2>We made this</h2>
+                        <img width="700" src="./images/highway.jpg" alt="Highway">
+                    </section>
+                    <section data-background="./images/logo-rabbitmq.jpg">
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>It made this</h2>
+                        <img width="700" src="./images/highway-light.jpg" alt="highway light">
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>Workers, workers, workers !</h2>
+                        <p>(you're going to hear about it in the next slides)</p>
+                    </section>
+                    <section data-background="#ff8c00">
+                        <h1>Fiability</h1>
+                    </section>
+                    <section data-background="#ff8c00">
+                        <h2>Shared DB between v2 &amp; v3</h2>
+                        <p>Very hard to maintain</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>Are you DBA ?</h2>
+                        <img width="500" src="./images/mr-clean.jpg" alt="pinky and the brain." />
+                    </section>
+                    <section data-background="#ff8c00">
+                        <h1>Speed... <span class="fragment">in workers</span></h1>
+                    </section>
+                    <section data-background="#ff8c00">
+                        <h2>Effectively, v3 is faster than v2 but...</h2>
+                    </section>
+                    <section data-background="#ff8c00">
+                        <h2>Workers inside application ?</h2>
+                        <ul>
+                            <li>We have to boot the whole sf2 kernel !</li>
+                            <li>Lot of code to deploy just for a worker</li>
+                            <li>Lot of code = memory leaks</li>
+                        </ul>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>Now we use Cilex</h2>
+                        <ul>
+                            <li class="fragment">Still have a DIC (Pimple)</li>
+                            <li class="fragment">Clone a skeleton, write your own logic and you're down</li>
+                            <li class="fragment">Fast to deploy</li>
+                            <li class="fragment"><a href="https://github.com/blablacar/worker-lib">blablacar/worker-lib</a></li>
+                        </ul>
+                    </section>
+                    <section data-background="#C83433">
+                        <h1>Scalability</h1>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>1 - Direct access to DB</h2>
+                        <p>The front should not access directly to DB</p>
+                    </section>
+                    <section data-background="#C83433">
+                        <h1>The front should not access directly to DB</h1>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>We're written Java...</h2>
+                        <ul>
+                            <li>Simple REST API</li>
+                            <li>Multiple backends (MySQL, CouchBase, ElasticSearch, ...)</li>
+                            <li>No more direct access to data</li>
+                            <li>Wait &amp; See. :)</li>
+                        </ul>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>2 - V3 is too monolithic.</h2>
+                    </section>
+                    <section data-background="#C83433">
+                        <h2>It's not ONLY about workers !</h2>
+                    </section>
+                    <section data-background="#C83433">
+                        <h1>SOA !</h1>
+                    </section>
+                    <section>
+                        <img height="800" src="./images/buzz-words.jpeg" alt="Buzz words">
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h1>Decoupled applications</h1>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>Workers, workers, workers !</h2>
+                        <ul>
+                            <li>mails</li>
+                            <li>sms</li>
+                            <li>user actions</li>
+                            <li>user ips</li>
+                            <li>...</li>
+                        </ul>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>But also...</h2>
+                        <ul>
+                            <li>geoproxy</li>
+                            <li>phonenumber</li>
+                            <li>waypagg</li>
+                        </ul>
+                    </section>
+                </section>
+
+                <section>
+                    <section>
+                        <h1>So... you're down ?</h1>
+                    </section>
+                    <section>
+                        <h2>Migrate France to V3</h2>
+                    </section>
+                    <section>
+                        <h2>Migrate Mobile to V3</h2>
+                    </section>
+                    <section>
+                        <h2>Explode our application</h2>
+                        <p>(I really want do to that ! \o/)</p>
+                    </section>
+                    <section data-background="#6CB52D">
+                        <h2>Became an international company ?</h2>
+                        <img src="./images/pinky-and-the-brain.jpg" alt="pinky and the brain.">
+                    </section>
+                </section>
+
+
+                <section>
+                    <h2>Questions ?</h2>
+                    <br />
+                    <p>Follow me: @odolbeau</p>
+                    <br />
+                    <small>You want to work with us ? cv@blablacar.com</small>
+                </section>
+
+            </div>
+
+        </div>
+
+        <script src="lib/js/head.min.js"></script>
+        <script src="js/reveal.min.js"></script>
+
+        <script>
+
+        // Full list of configuration options available here:
+        // https://github.com/hakimel/reveal.js#configuration
+        Reveal.initialize({
+            controls: true,
+            progress: true,
+            history: true,
+            center: true,
+
+            theme: Reveal.getQueryHash().theme, // available themes are in /css/theme
+            transition: Reveal.getQueryHash().transition || 'default', // default/cube/page/concave/zoom/linear/fade/none
+
+            // Optional libraries used to extend on reveal.js
+            dependencies: [
+            { src: 'lib/js/classList.js', condition: function() { return !document.body.classList; } },
+            { src: 'plugin/markdown/marked.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+            { src: 'plugin/markdown/markdown.js', condition: function() { return !!document.querySelector( '[data-markdown]' ); } },
+            { src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } },
+            { src: 'plugin/zoom-js/zoom.js', async: true, condition: function() { return !!document.body.classList; } },
+            { src: 'plugin/notes/notes.js', async: true, condition: function() { return !!document.body.classList; } }
+            ]
+        });
+
+        </script>
+
+    </body>
+</html>
